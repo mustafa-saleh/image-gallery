@@ -1,17 +1,17 @@
-version: '3'
+version: "3"
 
-services: 
+services:
   app:
     build: .
-    env_file: 
+    env_file:
       - ./config/.env
-    ports: 
+    ports:
       - 80:5000
-    links: 
-      - mongodb
-    depends_on: 
-      - mongodb
-  mongodb:
-    image: mongo
-    ports: 
-      - 27017:27017
+    links:
+      - mysqldb
+    depends_on:
+      - mysqldb
+  mysqldb:
+    image: mysql
+    ports:
+      - 3306:3306
