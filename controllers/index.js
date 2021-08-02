@@ -9,8 +9,8 @@ const { successHandler } = require("../middlewares/handlers");
 function homePage(req, res, next) {
   const response = {
     data: {
-      message: "WEB_API_BASE with docker & CI/CD Pipelines",
-      version: "2.0.1",
+      message: "image gallery with docker & CI/CD Pipelines",
+      version: "1.0.0",
     },
   };
   successHandler(res, response);

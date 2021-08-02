@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const { logger, consoleLogger } = require("./utils/logger");
 const { errorsHandler } = require("./middlewares/handlers");
 const { BadRequest, NotFound } = require("./utils/http-errors");
-const { roleRoutes, userRoutes, authRoutes, homeRoutes } = require("./routes");
+const { userRoutes, authRoutes, homeRoutes } = require("./routes");
 
 const app = express();
 //📌 morgan, only log failed requests
@@ -23,7 +23,6 @@ app.use(morgan("combined", { stream: logger.stream, skip }));
 
 //🎯 application routes
 app.use("/api/auth", authRoutes);
-app.use("/api/roles", roleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/", homeRoutes);
 

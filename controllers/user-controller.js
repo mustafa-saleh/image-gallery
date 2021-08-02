@@ -1,7 +1,7 @@
-const { User } = require("../models");
+const User = require("../models/user-model");
 const { BadRequest, NotFound } = require("../utils/http-errors");
 const { successHandler } = require("../middlewares/handlers");
-const { errorsReducer } = require("../utils/mongoose");
+const { errorsReducer } = require("../utils/database");
 
 /**
  * @api {get} /:id Request user by id
@@ -14,9 +14,9 @@ const { errorsReducer } = require("../utils/mongoose");
 async function getUserbyId(req, res, next) {
   const { id } = req.params;
   try {
-    const user = await User.findById(id);
+    const user = await User.findOne({ where: { id } });
     if (!user) return next(new NotFound(`User ${id} not Found`));
-    successHandler(res, { data: user });
+    successHandler(res, { data: user.toUserJSON() });
   } catch (error) {
     const errors = errorsReducer(error.errors || `Failed to get User id ${id}`);
     next(new BadRequest(errors));
@@ -35,7 +35,7 @@ async function addUser(req, res, next) {
 
   try {
     const user = await User.create({ name, email, password });
-    successHandler(res, { statusCode: 201, data: user.toJSON() });
+    successHandler(res, { statusCode: 201, data: user.toUserJSON() });
   } catch (error) {
     const errors = errorsReducer(
       error.errors || `Failed to add User ${name}, ${email}`

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { User } = require("../models");
+const User = require("../models/user-model");
 const { Unauthorized } = require("../utils/http-errors");
 
 /**
@@ -13,7 +13,7 @@ function authenticate(req, res, next) {
 
   try {
     const { id } = jwt.verify(userToken, process.env.JWT_SECRET_KEY);
-    req.user = User.findById(id);
+    req.user = User.findOne({ where: { id } });
     next();
   } catch (error) {
     next(new Unauthorized("Authentication Failed"));

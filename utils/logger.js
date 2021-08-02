@@ -8,7 +8,7 @@ const logger = new createLogger({
   format: format.combine(format.timestamp(), format.prettyPrint()),
   transports: [
     new transports.DailyRotateFile({
-      filename: "web_api_base-%DATE%.log",
+      filename: "image_gallery-%DATE%.log",
       dirname: "logs/debug",
       timestamp: format.timestamp(),
       datePattern: "YYYY-MM-DD",
@@ -19,7 +19,7 @@ const logger = new createLogger({
   // 🌴 🏭 enable for production
   // exceptionHandlers: [
   //   new transports.DailyRotateFile({
-  //     filename: "web_api_base-%DATE%.log",
+  //     filename: "image_gallery-%DATE%.log",
   //     dirname: "logs/exceptions",
   //     timestamp: format.timestamp(),
   //     datePattern: "YYYY-MM-DD",

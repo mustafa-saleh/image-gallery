@@ -1,7 +1,7 @@
-const { User } = require("../models");
+const User = require("../models/user-model");
 const { BadRequest } = require("../utils/http-errors");
 const { successHandler } = require("../middlewares/handlers");
-const { errorsReducer } = require("../utils/mongoose");
+const { errorsReducer } = require("../utils/database");
 
 /**
  * @api {post} /login log user in
@@ -13,7 +13,7 @@ async function login(req, res, next) {
   const { email, password } = req.body;
   try {
     //1️⃣ check if user exists
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ where: { email } });
     if (!user) return next(new BadRequest("Incorrect User email or password"));
 
     //2️⃣ check if password is correct
@@ -23,7 +23,7 @@ async function login(req, res, next) {
 
     //🔓 generate token and send it in cookie
     const cookie = { cookieData: user.jwtToken() };
-    successHandler(res, { data: user.toJSON() }, cookie);
+    successHandler(res, { data: user.toUserJSON() }, cookie);
   } catch (error) {
     //⛔ login failed
     const errors = errorsReducer(

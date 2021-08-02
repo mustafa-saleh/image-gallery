@@ -1,72 +1,64 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { Schema, model } = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
+const { Model, DataTypes } = require("sequelize");
+const { sequelize } = require("../utils/database");
+// const Image = require("./image");
 
-const UserSchema = new Schema(
+class User extends Model {
+  hashPassword(password) {
+    const salt = bcrypt.genSaltSync();
+    return bcrypt.hashSync(password, salt);
+  }
+
+  //📌 delete password before returning user
+  toUserJSON() {
+    const obj = this.toJSON();
+    delete obj.password;
+    return obj;
+  }
+
+  //📌 comapre password entered passsword to hased one
+  async verifyPassword(password) {
+    return await bcrypt.compare(password, this.password);
+  }
+
+  //📌 generate user token
+  jwtToken() {
+    const { JWT_SECRET_KEY, JWT_EXPIRES_IN } = process.env;
+    return jwt.sign({ id: this.id }, JWT_SECRET_KEY, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
+  }
+}
+
+User.init(
   {
     name: {
-      type: String,
-      trim: true,
-      required: [true, "User {PATH} is required"],
-      maxlength: [50, "User {PATH} maximum length exceeded"],
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
     email: {
-      type: String,
-      trim: true,
-      required: [true, "User {PATH} is required"],
+      type: DataTypes.STRING(50),
+      allowNull: false,
       unique: true,
-      uniqueCaseInsensitive: true,
-      match: [
-        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        "Invalid user {PATH}",
-      ],
     },
     password: {
-      type: String,
-      trim: true,
-      required: [true, "User {PATH} is required"],
-      minlength: [6, "User {PATH} minimum length is 6"],
-      maxlength: [255, "User {PATH} maximum length exceeded"],
-      select: false,
+      type: DataTypes.STRING,
+      allowNull: false,
+      set(value) {
+        this.setDataValue("password", this.hashPassword(value));
+      },
     },
   },
-  { timestamps: true }
+  { sequelize, modelName: "user", timestamps: false }
 );
 
-UserSchema.pre("save", async function (next) {
-  //📌 only hash the password if it has been modified (or is new)
-  if (!this.isModified("password")) {
-    return next();
-  }
-  const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
-});
-
-//📌 delete password before returning user
-UserSchema.methods.toJSON = function () {
-  const obj = this.toObject();
-  delete obj.password;
-  return obj;
-};
-
-//📌 comapre password entered passsword to hased one
-UserSchema.methods.verifyPassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
-};
-
-//📌 generate user token
-UserSchema.methods.jwtToken = function () {
-  const { JWT_SECRET_KEY, JWT_EXPIRES_IN } = process.env;
-  return jwt.sign({ id: this._id }, JWT_SECRET_KEY, {
-    expiresIn: JWT_EXPIRES_IN,
-  });
-};
-
-UserSchema.plugin(uniqueValidator, {
-  message: "User {PATH} '{VALUE}' already exists",
-});
-
-const User = model("User", UserSchema);
+// User.hasMany(Image, {
+//     foreignKey: {
+//       name: "teamId",
+//       allowNull: true,
+//     },
+//   });
+//   Image.belongsTo(User);
 
 module.exports = User;

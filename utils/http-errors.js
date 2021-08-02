@@ -1,5 +1,5 @@
 /**
- * This file is part of web_api_base project
+ * This file is part of image gallery project
  * (c) 2020
  *
  * --------------------------------------------
