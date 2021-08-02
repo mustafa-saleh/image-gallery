@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config server.js",
+    "dev": "nodemon -r dotenv/config server.js  dotenv_config_path=./config/.env",
     "start": "node server.js",
     "test": "echo \"PLEASE ADD TESTS: no test specified\""
   },
