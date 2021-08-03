@@ -22,8 +22,9 @@ async function login(req, res, next) {
       return next(new BadRequest("Incorrect User email or password"));
 
     //🔓 generate token and send it in cookie
-    const cookie = { cookieData: user.jwtToken() };
-    successHandler(res, { data: user.toUserJSON() }, cookie);
+    // const cookie = { cookieData: user.jwtToken() };
+    const data = { ...user.toUserJSON(), token: user.jwtToken() };
+    successHandler(res, { data } /*, cookie*/);
   } catch (error) {
     //⛔ login failed
     const errors = errorsReducer(
@@ -42,11 +43,10 @@ async function login(req, res, next) {
  */
 async function logout(req, res, next) {
   //📌 clear cookie by setting it to expire now
-  const cookie = {
-    cookieData: "clear",
-    options: { expires: new Date() },
-  };
-  successHandler(res, {}, cookie);
+  // const cookie = {
+  //   cookieData: "clear",
+  //   options: { expires: new Date() },
+  // };
+  successHandler(res, {} /*cookie*/);
 }
-
 module.exports = { login, logout };

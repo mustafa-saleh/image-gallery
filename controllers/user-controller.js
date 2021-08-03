@@ -15,7 +15,7 @@ async function getUserbyId(req, res, next) {
   const { id } = req.params;
   try {
     const user = await User.findOne({ where: { id } });
-    if (!user) return next(new NotFound(`User ${id} not Found`));
+    if (!user) return next(new BadRequest(`User ${id} not Found`));
     successHandler(res, { data: user.toUserJSON() });
   } catch (error) {
     const errors = errorsReducer(error.errors || `Failed to get User id ${id}`);
@@ -31,15 +31,19 @@ async function getUserbyId(req, res, next) {
  * @access public
  */
 async function addUser(req, res, next) {
-  const { name, email, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await User.create({ name, email, password });
-    successHandler(res, { statusCode: 201, data: user.toUserJSON() });
+    let user = await User.findOne({ where: { email } });
+    if (user)
+      return next(
+        new BadRequest(`An account with email ${email} already exists`)
+      );
+    user = await User.create({ email, password });
+    const data = { ...user.toUserJSON(), token: user.jwtToken() };
+    successHandler(res, { statusCode: 201, data });
   } catch (error) {
-    const errors = errorsReducer(
-      error.errors || `Failed to add User ${name}, ${email}`
-    );
+    const errors = errorsReducer(error.errors || `Failed to add User ${email}`);
     next(new BadRequest(errors));
   }
 }

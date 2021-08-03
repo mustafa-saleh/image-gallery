@@ -42,11 +42,6 @@ async function checkLoginParams(req, res, next) {
  */
 async function checkRegisterParams(req, res, next) {
   const chain = [
-    body("name")
-      .notEmpty()
-      .withMessage("User name is required")
-      .isLength({ max: 50 })
-      .withMessage("User name maximum length exceeded"),
     body("email")
       .notEmpty()
       .withMessage("User email is required")
