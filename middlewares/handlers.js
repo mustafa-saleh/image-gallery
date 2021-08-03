@@ -6,10 +6,12 @@ const { logger } = require("../utils/logger");
  * @returns {Object} response - constains staus and message
  */
 function errorsHandler(err, req, res, next) {
-  logger.error(`${err.statusCode}, ${JSON.stringify(err.errors)}`);
+  logger.error(
+    `${err.statusCode}, ${JSON.stringify(err.errors || err.message)}`
+  );
   return res.status(err.statusCode || 500).json({
     status: "error",
-    errors: err.errors,
+    errors: err.errors || err.message,
   });
 }
 

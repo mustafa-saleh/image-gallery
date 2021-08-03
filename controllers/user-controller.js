@@ -1,7 +1,7 @@
 const User = require("../models/user-model");
 const { BadRequest, NotFound } = require("../utils/http-errors");
 const { successHandler } = require("../middlewares/handlers");
-const { errorsReducer } = require("../utils/database");
+const { errorsReducer } = require("../utils/error-reducer");
 
 /**
  * @api {get} /:id Request user by id

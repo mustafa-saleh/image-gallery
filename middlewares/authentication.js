@@ -7,13 +7,13 @@ const { Unauthorized } = require("../utils/http-errors");
  * @middleware authenticate
  * @failure {Object} Unauthorized - constains staus and message
  */
-function authenticate(req, res, next) {
+async function authenticate(req, res, next) {
   const { userToken } = req.cookies;
   if (!userToken) return next(new Unauthorized("Authentication required"));
 
   try {
     const { id } = jwt.verify(userToken, process.env.JWT_SECRET_KEY);
-    req.user = User.findOne({ where: { id } });
+    req.user = await User.findOne({ where: { id } });
     next();
   } catch (error) {
     next(new Unauthorized("Authentication Failed"));
