@@ -1,7 +1,7 @@
 const User = require("../models/user-model");
 const { BadRequest } = require("../utils/http-errors");
 const { successHandler } = require("../middlewares/handlers");
-const { errorsReducer } = require("../utils/database");
+const { errorsReducer } = require("../utils/error-reducer");
 
 /**
  * @api {post} /login log user in

@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Model, DataTypes } = require("sequelize");
 const { sequelize } = require("../utils/database");
-// const Image = require("./image");
+const Image = require("./image-model");
 
 class User extends Model {
   hashPassword(password) {
@@ -53,12 +53,12 @@ User.init(
   { sequelize, modelName: "user", timestamps: false }
 );
 
-// User.hasMany(Image, {
-//     foreignKey: {
-//       name: "teamId",
-//       allowNull: true,
-//     },
-//   });
-//   Image.belongsTo(User);
+User.hasMany(Image, {
+  foreignKey: {
+    name: "userId",
+    allowNull: false,
+  },
+});
+Image.belongsTo(User);
 
 module.exports = User;
